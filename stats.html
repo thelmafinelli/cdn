@@ -2,34 +2,32 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>CoinCheck — traffic</title>
 <style>
 body{margin:0;background:#08080e;color:#eceef6;font:15px/1.6 system-ui,sans-serif;padding:26px}
-.wrap{max-width:640px;margin:0 auto}h1{font-size:21px;margin:0 0 4px}
-p{color:#8b8ea3;margin:0 0 18px;font-size:13.5px}
-.row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.wrap{max-width:620px;margin:0 auto}h1{font-size:21px;margin:0 0 4px}p{color:#8b8ea3;margin:0 0 16px;font-size:13px}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .c{background:#11121b;border:1px solid #21222f;border-radius:14px;padding:14px}
 .c b{display:block;font-size:24px;color:#f0b429}.c span{font-size:10.5px;color:#8b8ea3;text-transform:uppercase;letter-spacing:.07em}
-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
 td{padding:9px 4px;border-bottom:1px solid #191a25}td:last-child{text-align:right;color:#31c48d;font-weight:700}
 .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#31c48d;margin-right:6px;animation:p 1.6s infinite}
 @keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
 </style></head><body><div class="wrap">
-<h1>Traffic</h1><p><span class="dot"></span>live &middot; refreshes every 20s &middot; counters on abacus.jasoncameron.dev</p>
+<h1>Traffic</h1><p><span class="dot"></span>live &middot; refresh 20s &middot; counters: abacus.jasoncameron.dev</p>
 <div class="row">
- <div class="c"><b id="live">–</b><span>online (1h)</span></div>
+ <div class="c"><b id="live">–</b><span>online (5 min)</span></div>
  <div class="c"><b id="uv">–</b><span>unique visitors</span></div>
  <div class="c"><b id="tot">–</b><span>total views</span></div>
 </div>
 <table><tbody id="tb"></tbody></table>
 </div><script>
-var NS="coincheckx",API="https://abacus.jasoncameron.dev",SLOT=Math.floor(Date.now()/300000),W=6,q=[],busy=false;
-function pump(){if(busy||!q.length)return;busy=true;var j=q.shift();
- fetch(API+"/"+j.m+"/"+NS+"/"+j.k).then(r=>r.ok?r.json():(r.status===429?(j.r=(j.r||0)+1,null):null)).catch(()=>null)
- .then(v=>{if(v===null&&j.r&&j.r<4){j.r++;q.unshift(j);}else if(j.cb)j.cb(v||{value:0});busy=false;setTimeout(pump,420);});}
+var NS="coincheckx",API="https://abacus.jasoncameron.dev",SLOT=Math.floor(Date.now()/300000),q=[],busy=false;
+function pump(){if(busy||!q.length)return;busy=true;var j=q.shift(),t=0;
+ (function run(){fetch(API+"/"+j.m+"/"+NS+"/"+j.k).then(r=>r.ok?r.json():(r.status===429?null:{value:0})).catch(()=>({value:0}))
+ .then(v=>{if(v===null&&++t<5){setTimeout(run,900*t);return;}j.cb&&j.cb(v);busy=false;setTimeout(pump,550);})})();}
 function get(k,cb){q.push({m:"get",k:k,cb:cb});pump();}
-function load(){var d={h:0,b:0,u:0,l:0},left=3+W;
+function load(){var d={h:0,b:0,u:0,l:0},left=4;
  function fin(){if(--left)return;live.textContent=d.l;uv.textContent=d.u;tot.textContent=d.h+d.b;
   tb.innerHTML="";[["/ (home)",d.h],["/bulk.html",d.b]].forEach(([n,v])=>{var tr=document.createElement("tr");tr.innerHTML="<td></td><td></td>";tr.children[0].textContent=n;tr.children[1].textContent=v;tb.appendChild(tr);});}
- get("pv_index",j=>{d.h=j.value||0;fin()});get("pv_bulk",j=>{d.b=j.value||0;fin()});get("uv",j=>{d.u=j.value||0;fin()});
- for(var i=1;i<=W;i++)(function(i){get("lb"+((SLOT-i+100000)%100000),j=>{d.l+=j.value||0;fin()})})(i);}
-load();setInterval(load,30000);
-
+ get("pv_index",j=>{d.h=j.value||0;fin()});get("pv_bulk",j=>{d.b=j.value||0;fin()});
+ get("uniqs",j=>{d.u=j.value||0;fin()});get("lb"+(SLOT%100000),j=>{d.l=j.value||0;fin()});}
+load();setInterval(load,20000);
 </script></body></html>
