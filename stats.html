@@ -20,18 +20,16 @@ td{padding:9px 4px;border-bottom:1px solid #191a25}td:last-child{text-align:righ
 </div>
 <table><tbody id="tb"></tbody></table>
 </div><script>
-var NS="coincheckx",API="https://abacus.jasoncameron.dev",SLOT=Math.floor(Date.now()/300000),W=12;
-function get(k){return fetch(API+"/get/"+NS+"/"+k).then(r=>r.ok?r.json():{value:0}).catch(()=>({value:0}));}
-function load(){
- var jobs=[get("pv_index"),get("pv_bulk"),get("uv")];
- for(var i=1;i<=W;i++)jobs.push(get("lb"+((SLOT-i+100000)%100000)));
- Promise.all(jobs).then(r=>{
-  var live=0;for(var i=3;i<r.length;i++)live+=(r[i].value||0);
-  live.textContent=live;uv.textContent=r[2].value||0;
-  var h=r[0].value||0,b=r[1].value||0;tot.textContent=h+b;
-  tb.innerHTML="";
-  [["/ (home)",h],["/bulk.html",b]].forEach(([n,v])=>{var tr=document.createElement("tr");tr.innerHTML="<td></td><td></td>";tr.children[0].textContent=n;tr.children[1].textContent=v;tb.appendChild(tr);});
- });
-}
-load();setInterval(load,20000);
+var NS="coincheckx",API="https://abacus.jasoncameron.dev",SLOT=Math.floor(Date.now()/300000),W=6,q=[],busy=false;
+function pump(){if(busy||!q.length)return;busy=true;var j=q.shift();
+ fetch(API+"/"+j.m+"/"+NS+"/"+j.k).then(r=>r.ok?r.json():(r.status===429?(j.r=(j.r||0)+1,null):null)).catch(()=>null)
+ .then(v=>{if(v===null&&j.r&&j.r<4){j.r++;q.unshift(j);}else if(j.cb)j.cb(v||{value:0});busy=false;setTimeout(pump,420);});}
+function get(k,cb){q.push({m:"get",k:k,cb:cb});pump();}
+function load(){var d={h:0,b:0,u:0,l:0},left=3+W;
+ function fin(){if(--left)return;live.textContent=d.l;uv.textContent=d.u;tot.textContent=d.h+d.b;
+  tb.innerHTML="";[["/ (home)",d.h],["/bulk.html",d.b]].forEach(([n,v])=>{var tr=document.createElement("tr");tr.innerHTML="<td></td><td></td>";tr.children[0].textContent=n;tr.children[1].textContent=v;tb.appendChild(tr);});}
+ get("pv_index",j=>{d.h=j.value||0;fin()});get("pv_bulk",j=>{d.b=j.value||0;fin()});get("uv",j=>{d.u=j.value||0;fin()});
+ for(var i=1;i<=W;i++)(function(i){get("lb"+((SLOT-i+100000)%100000),j=>{d.l+=j.value||0;fin()})})(i);}
+load();setInterval(load,30000);
+
 </script></body></html>
