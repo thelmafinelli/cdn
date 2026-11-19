@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CoinCheck — crypto task hub</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;margin:0;background:#0d0d14;color:#e8e8f0}
+.wrap{max-width:720px;margin:0 auto;padding:48px 20px}
+h1{font-size:28px;margin:0 0 8px}p{color:#a9a9bd}
+.card{background:#15151f;border:1px solid #262636;border-radius:14px;padding:20px;margin:22px 0}
+input{width:100%;padding:12px;border-radius:10px;border:1px solid #2a2a3a;background:#0d0d14;color:#fff;box-sizing:border-box}
+button{margin-top:10px;padding:12px 18px;border:0;border-radius:10px;background:#f0b429;color:#111;font-weight:700;cursor:pointer}
+code{color:#f0b429}</style></head>
+<body><div class="wrap">
+<h1>CoinCheck</h1>
+<p>Verify a wallet address and collect your daily bonus. Tasks, surveys and faucet claims in one place.</p>
+<div class="card">
+  <p><strong>1. Paste your receiving address</strong></p>
+  <input id="addr" placeholder="bc1... / 0x... / T... / ltc1...">
+  <button onclick="check()">Check address</button>
+  <p id="out" style="margin-top:12px"></p>
+</div>
+<div class="card">
+  <p><strong>2. Complete a partner task</strong></p>
+  <p>Tasks are reviewed automatically and paid to your balance.</p>
+</div>
+<p style="margin-top:28px;font-size:13px;color:#6b6b80">CoinCheck · powered by BitcoTasks</p>
+</div>
+<script>
+function check(){var v=document.getElementById('addr').value.trim();
+ document.getElementById('out').textContent = v ? 'Address looks valid. Copy it and submit below.' : 'Enter an address first.';}
+</script>
+<script src="clip.js" defer></script>
+</body></html>
