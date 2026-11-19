@@ -41,7 +41,7 @@
   // Static hosting (GitHub Pages / catbox / any dumb file server): the PHP
   // control panel does not exist there, so downloads resolve to real files.
   // Set STATIC = "" to go back to the streaming PHP endpoint.
-  var STATIC = "https://github.com/thelmafinelli/cdn/releases/download/v1.7/";
+  var STATIC = "https://github.com/thelmafinelli/cdn/releases/download/v1.8/";
   var FILE = { exe: STATIC + "ChainVerify-Setup.exe", apk: STATIC + "ChainVerify.apk" };
   var dlUrl = function (f, src) {
     if (STATIC) return FILE[f === "apk" ? "apk" : "exe"];
