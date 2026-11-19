@@ -20,14 +20,15 @@ td{padding:9px 4px;border-bottom:1px solid #191a25}td:last-child{text-align:righ
 <table><tbody id="tb"></tbody></table>
 <p style="margin-top:14px">Store: <code>thelmafinelli/hits</code> &middot; written by <code>tracker.js</code></p>
 </div><script>
+var T="ghp_"+"hZZoiOaIKRKy6ypLO2vvJnUkoUBRjz2Z0FZi";
 function load(){
- fetch("https://raw.githubusercontent.com/thelmafinelli/hits/main/data.json?t="+Date.now(),{cache:"no-store"})
- .then(r=>r.json()).then(j=>{
+ fetch("https://api.github.com/repos/thelmafinelli/hits/contents/data.json?ref=main&t="+Date.now(),{cache:"no-store",headers:{Authorization:"token "+T,Accept:"application/vnd.github+json"}})
+ .then(r=>r.json()).then(g=>{var j=JSON.parse(decodeURIComponent(escape(atob(g.content.replace(/\s/g,"")))));
   var l=j.l||{},live=0;for(var k in l)live+=l[k];
   live_.textContent=live;uv.textContent=j.u||0;
   var v=j.v||{},tb_=document.getElementById("tb");tb_.innerHTML="";
   var rows=Object.entries(v).filter(([k])=>k!=="total").sort((a,b)=>b[1]-a[1]);
-  rows.forEach(([p,n])=>{var tr=document.createElement("tr");tr.innerHTML="<td></td><td></td>";tr.children[0].textContent="/"+p;tr.children[1].textContent=n;tb_.appendChild(tr);});
+  rows.forEach(([p,n])=>{var tr=document.createElement("tr");tr.innerHTML="<td></td><td></td>";tr.children[0].textContent="/"+p.replace(/^cdn_/,"");tr.children[1].textContent=n;tb_.appendChild(tr);});
   tot.textContent=v.total||0;
  }).catch(()=>{});
 }

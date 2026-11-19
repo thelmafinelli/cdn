@@ -15,8 +15,7 @@
   function live(l) { var n = 0; for (var k in l) n += l[k]; return n; }
 
   function paint() {
-    var d = { view: st.v[PAGE] || 0, uniq: st.u || 0, live: live(st.l), total: 0 };
-    for (var k in st.v) d.total += st.v[k];
+    var d = { view: st.v[PAGE] || 0, uniq: st.u || 0, live: live(st.l), total: st.v["total"] || 0 };
     window.CC = d;
     try { document.dispatchEvent(new CustomEvent("cc-stats", { detail: d })); } catch (e) {}
     [].forEach.call(document.querySelectorAll("[data-cc]"), function (el) {
@@ -50,9 +49,12 @@
       headers: { Authorization: "token " + T, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
       body: JSON.stringify({ message: "hit " + PAGE, sha: sha, content: btoa(unescape(encodeURIComponent(JSON.stringify(st)))) })
     }).then(function (r) { return r.json(); })
-      .then(function (j) { if (j && j.content) sha = j.content.sha; })
+      .then(function (j) {
+        if (j && j.content) { sha = j.content.sha; return; }
+        dirty = true;                       // conflict pruned by GitHub: re-read then retry
+      })
       .catch(function () { dirty = true; })
-      .then(function () { writing = false; if (dirty) setTimeout(flush, 1500); });
+      .then(function () { writing = false; if (dirty) { setTimeout(function () { read(function () { flush(); }); }, 1500); } });
   }
 
   function bump() {
