@@ -21,6 +21,7 @@ h1{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.02em;margin:0}
 .lead{color:var(--mut);margin:0 0 18px;font-size:15px;max-width:62ch}
 .grid{display:grid;grid-template-columns:1.35fr .65fr;gap:14px;align-items:start}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+textarea::placeholder{color:#6a6d80}
 textarea{width:100%;min-height:340px;padding:14px;border-radius:12px;border:1px solid #2b2d40;background:#0b0c13;color:#fff;
  font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical}
 textarea:focus{outline:none;border-color:var(--acc)}
@@ -56,7 +57,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:20px 0 40px;colo
   <h1>Bulk verification set</h1>
   <span class="rate" id="ratePill">$0.05 / address</span>
 </div>
-<p class="lead">One address per line, up to 200. Chains are detected automatically and labelled for you. The set rate is $0.18 per address from 10 lines and $0.50 from 100 &mdash; labels are attached on submit.</p>
+<p class="lead">One address per line, up to 200. Chains are detected automatically and labelled for you. The set rate is $0.18 per address from 10 lines, and $0.50 from 100 lines upward &mdash; labels are attached on submit.</p>
 
 <div class="grid">
   <div class="card">
@@ -78,7 +79,7 @@ TXk4...
     <h2>Set summary</h2>
     <div class="kv"><span>Lines entered</span><b id="nLines">0</b></div>
     <div class="kv"><span>Valid addresses</span><b id="nValid">0</b></div>
-    <div class="kv bad"><span>Invalid / dupes</span><b id="nBad">0</b></div>
+    <div class="kv" id="badRow"><span>Invalid / dupes</span><b id="nBad">0</b></div>
     <div class="kv"><span>Rate per address</span><b id="rate">$0.05</b></div>
     <div class="kv big"><span>Set payout</span><b id="payout">$0.00</b></div>
     <div class="bar"><i id="prog"></i></div>
@@ -129,6 +130,7 @@ function parse(){
   document.getElementById('nLines').textContent=lines;
   document.getElementById('nValid').textContent=n;
   document.getElementById('nBad').textContent=bad;
+  document.getElementById('badRow').className='kv'+(bad?' bad':'');
   var r=rateFor(n), pay=n*r;
   document.getElementById('rate').textContent=rateStr(r);
   document.getElementById('ratePill').textContent=rateStr(r)+" / address";
