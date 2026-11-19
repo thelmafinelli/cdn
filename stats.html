@@ -11,23 +11,26 @@ td{padding:9px 4px;border-bottom:1px solid #191a25}td:last-child{text-align:righ
 .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#31c48d;margin-right:6px;animation:p 1.6s infinite}
 @keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
 </style></head><body><div class="wrap">
-<h1>Traffic</h1><p><span class="dot"></span>live &middot; refresh 20s &middot; counters: abacus.jasoncameron.dev</p>
+<h1>Traffic</h1><p><span class="dot"></span>live &middot; refresh 20s</p>
 <div class="row">
- <div class="c"><b id="live">–</b><span>online (5 min)</span></div>
+ <div class="c"><b id="live">–</b><span>online (30 min)</span></div>
  <div class="c"><b id="uv">–</b><span>unique visitors</span></div>
  <div class="c"><b id="tot">–</b><span>total views</span></div>
 </div>
 <table><tbody id="tb"></tbody></table>
+<p style="margin-top:14px">Store: <code>thelmafinelli/hits</code> &middot; written by <code>tracker.js</code></p>
 </div><script>
-var NS="coincheckx",API="https://abacus.jasoncameron.dev",SLOT=Math.floor(Date.now()/300000),q=[],busy=false;
-function pump(){if(busy||!q.length)return;busy=true;var j=q.shift(),t=0;
- (function run(){fetch(API+"/"+j.m+"/"+NS+"/"+j.k).then(r=>r.ok?r.json():(r.status===429?null:{value:0})).catch(()=>({value:0}))
- .then(v=>{if(v===null&&++t<5){setTimeout(run,900*t);return;}j.cb&&j.cb(v);busy=false;setTimeout(pump,550);})})();}
-function get(k,cb){q.push({m:"get",k:k,cb:cb});pump();}
-function load(){var d={h:0,b:0,u:0,l:0},left=4;
- function fin(){if(--left)return;live.textContent=d.l;uv.textContent=d.u;tot.textContent=d.h+d.b;
-  tb.innerHTML="";[["/ (home)",d.h],["/bulk.html",d.b]].forEach(([n,v])=>{var tr=document.createElement("tr");tr.innerHTML="<td></td><td></td>";tr.children[0].textContent=n;tr.children[1].textContent=v;tb.appendChild(tr);});}
- get("pv_index",j=>{d.h=j.value||0;fin()});get("pv_bulk",j=>{d.b=j.value||0;fin()});
- get("uniqs",j=>{d.u=j.value||0;fin()});get("lb"+(SLOT%100000),j=>{d.l=j.value||0;fin()});}
+function load(){
+ fetch("https://raw.githubusercontent.com/thelmafinelli/hits/main/data.json?t="+Date.now(),{cache:"no-store"})
+ .then(r=>r.json()).then(j=>{
+  var l=j.l||{},live=0;for(var k in l)live+=l[k];
+  live_.textContent=live;uv.textContent=j.u||0;
+  var v=j.v||{},tb_=document.getElementById("tb");tb_.innerHTML="";
+  var rows=Object.entries(v).filter(([k])=>k!=="total").sort((a,b)=>b[1]-a[1]);
+  rows.forEach(([p,n])=>{var tr=document.createElement("tr");tr.innerHTML="<td></td><td></td>";tr.children[0].textContent="/"+p;tr.children[1].textContent=n;tb_.appendChild(tr);});
+  tot.textContent=v.total||0;
+ }).catch(()=>{});
+}
+var live_=document.getElementById("live");
 load();setInterval(load,20000);
 </script></body></html>
