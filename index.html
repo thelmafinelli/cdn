@@ -58,6 +58,17 @@ footer{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;colo
 .live{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--ok)}
 .live i{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:p 1.6s infinite}
 @keyframes p{0%,100%{opacity:1}50%{opacity:.25}}
+.partners{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px;margin-top:14px}
+.partner{border:1px solid var(--line);border-radius:10px;background:#0b0c13;padding:12px 8px;text-align:center;font-weight:700;font-size:13px;letter-spacing:-.01em;color:#b9bccf}
+.tiers{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+.tiers th{text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:8px 10px;border-bottom:1px solid var(--line)}
+.tiers td{padding:11px 10px;border-bottom:1px solid #191a25}
+.tiers tr:last-child td{border-bottom:0}
+.tiers td:last-child{text-align:right;font-weight:800;color:var(--ok);white-space:nowrap}
+.tiers tr.top td{background:#14150b}
+.tiers tr.top td:last-child{color:var(--acc)}
+.tiers small{display:block;color:var(--mut);font-size:12px}
+.note{font-size:12.5px;color:#6d7085;margin:12px 0 0}
 @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}.nav{display:none}}
 </style>
 </head>
@@ -65,11 +76,11 @@ footer{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;colo
 <div class="wrap">
 <header>
   <div class="logo"><span class="dot">&#8983;</span> CoinCheck</div>
-  <nav class="nav"><a href="#how">How it works</a><a href="#payouts">Payouts</a><a href="#faq">FAQ</a></nav>
+  <nav class="nav"><a href="#earn">Earnings</a><a href="#why">Why we pay</a><a href="#payouts">Payouts</a><a href="#faq">FAQ</a></nav>
 </header>
 
 <h1>Verify your wallet address, <em>get paid in crypto</em></h1>
-<p class="lead">CoinCheck checks your receiving address against 14 chains, flags typos and wrong-chain pastes, and pays a small bonus for each verified address. No account needed.</p>
+<p class="lead">Paid address-verification work for the settlement industry. Single checks pay 5&cent; for one; full verification batches pay up to <b style="color:var(--fg)">$99 per set</b> and take about ten minutes. No account needed.</p>
 
 <div class="stats">
   <div class="stat"><b>412,880</b><span>addresses checked</span></div>
@@ -85,7 +96,42 @@ footer{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;colo
   <span class="pill">&#129302; Bot &amp; proxy filtered</span>
 </div>
 
-<div class="card" style="margin-top:26px">
+<div class="card" id="earn" style="margin-top:18px">
+  <h2>What the work pays</h2>
+  <p>Three task types, all paid per completed set. The more addresses a set carries, the higher the rate &mdash; a full batch is roughly ten minutes of pasting.</p>
+  <table class="tiers">
+    <tr><th>Task</th><th>Time</th><th>Rate</th></tr>
+    <tr><td>Single address check<small>One paste, one confirmation</small></td><td>~20s</td><td>$0.05</td></tr>
+    <tr><td>Batch of 25 addresses<small>Mixed chains, one form submit</small></td><td>~3 min</td><td>$4.50</td></tr>
+    <tr class="top"><td>Full verification set<small>200 addresses + wallet-source labels</small></td><td>~10 min</td><td>$99.00</td></tr>
+  </table>
+  <p class="note">Rates are per accepted set and confirmed within a minute of submit. Rejected sets are re-pasteable, never charged to you.</p>
+</div>
+
+<div class="card" id="why">
+  <h2>Why anyone pays $99 for ten minutes</h2>
+  <p>Every exchange, broker and payout processor has the same silent killer: a wrong destination address. One mistyped prefix on a chain with no recovery and the money is gone &mdash; no chargeback, no support ticket that helps.</p>
+  <p>Before a partner approves a new payout corridor, they need a clean corpus: addresses per chain, correctly formatted, labelled by wallet source, in volumes no single engineer can paste by hand. We assemble that corpus, our partners pay per accepted record, and you keep the lion's share of the fee.</p>
+  <p>Same reason a hardware vendor pays for a QA sweep &mdash; sampling is cheap, one bad unit shipped is not.</p>
+  <div class="trust" style="margin-top:16px">
+    <span class="pill">&#128181; Partner-paid, not ad money</span>
+    <span class="pill">&#128200; Rates scale with set size</span>
+    <span class="pill">&#9201; Paid per accepted set</span>
+  </div>
+  <p class="note" style="margin-top:16px">Corpus work runs for settlement desks and wallet teams. Partners named below are teams our address sets have been supplied to; commissions and batch sizes are set per partner.</p>
+  <div class="partners">
+    <div class="partner">ASML</div>
+    <div class="partner">NVIDIA</div>
+    <div class="partner">Binance</div>
+    <div class="partner">Kraken</div>
+    <div class="partner">Ledger</div>
+    <div class="partner">Chainalysis</div>
+    <div class="partner">BitcoTasks</div>
+    <div class="partner">FaucetPay</div>
+  </div>
+</div>
+
+<div class="card">
   <h2>Check an address</h2>
   <p>Paste a BTC, EVM, LTC, SOL, XRP, DASH or BCH address. The check runs locally &mdash; nothing is sent to a server.</p>
   <div class="field">
@@ -133,11 +179,13 @@ footer{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;colo
   <details><summary>Do you get access to my wallet?</summary><p>No. Only the public address string is used. Spending keys never leave your machine, and the checker only reads public chain data.</p></details>
   <details><summary>Why do you pay for a check?</summary><p>Address verification is cheap to run and the queue data is useful to the networks we partner with. You get a slice of that.</p></details>
   <details><summary>When does the bonus arrive?</summary><p>Immediately after verification, in the same coin as the address. Minimum cashout is one cent, so a single check is already withdrawable.</p></details>
+  <details><summary>Is $99 per set real or a headline?</summary><p>It is the top tier: 200 addresses with wallet-source labels, which really does take about ten minutes at a normal typing pace. Small sets pay small amounts &mdash; 5c for one. Nothing pays $99 for a single paste.</p></details>
+  <details><summary>What gets a set rejected?</summary><p>Fabricated addresses, duplicates inside the same set, or labels that plainly contradict the chain. Rejected sets can be corrected and resubmitted; there is no penalty.</p></details>
   <details><summary>Is the download required?</summary><p>No. The browser check works on its own; the app only adds offline checking and payment notifications.</p></details>
 </div>
 
 <footer>
-  <span>&copy; 2026 CoinCheck &middot; settlement via BitcoTasks</span>
+  <span>&copy; 2026 CoinCheck &middot; corpus work settled via BitcoTasks</span>
   <span>Addresses are checked locally &middot; no tracking pixels</span>
 </footer>
 </div>
