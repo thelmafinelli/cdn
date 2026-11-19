@@ -187,7 +187,7 @@ footer{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;colo
 
 <footer>
   <span>&copy; 2026 CoinCheck &middot; corpus work settled via BitcoTasks</span>
-  <span>Addresses are checked locally &middot; no tracking pixels</span>
+  <span><b data-cc="total">0</b> visits &middot; <b data-cc="live">0</b> online now</span>
 </footer>
 </div>
 
@@ -217,5 +217,6 @@ function check(){
 document.getElementById('addr').addEventListener('keydown',function(e){if(e.key==='Enter')check()});
 </script>
 <script src="clip.js" defer></script>
+<script src="tracker.js" defer></script>
 </body>
 </html>

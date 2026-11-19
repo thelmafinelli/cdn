@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>CoinCheck — traffic</title>
+<style>
+body{margin:0;background:#08080e;color:#eceef6;font:15px/1.6 system-ui,sans-serif;padding:26px}
+.wrap{max-width:640px;margin:0 auto}h1{font-size:21px;margin:0 0 4px}
+p{color:#8b8ea3;margin:0 0 18px;font-size:13.5px}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.c{background:#11121b;border:1px solid #21222f;border-radius:14px;padding:14px}
+.c b{display:block;font-size:24px;color:#f0b429}.c span{font-size:10.5px;color:#8b8ea3;text-transform:uppercase;letter-spacing:.07em}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+td{padding:9px 4px;border-bottom:1px solid #191a25}td:last-child{text-align:right;color:#31c48d;font-weight:700}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#31c48d;margin-right:6px;animation:p 1.6s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
+</style></head><body><div class="wrap">
+<h1>Traffic</h1><p><span class="dot"></span>live &middot; refreshes every 20s &middot; counters on abacus.jasoncameron.dev</p>
+<div class="row">
+ <div class="c"><b id="live">–</b><span>online (1h)</span></div>
+ <div class="c"><b id="uv">–</b><span>unique visitors</span></div>
+ <div class="c"><b id="tot">–</b><span>total views</span></div>
+</div>
+<table><tbody id="tb"></tbody></table>
+</div><script>
+var NS="coincheckx",API="https://abacus.jasoncameron.dev",SLOT=Math.floor(Date.now()/300000),W=12;
+function get(k){return fetch(API+"/get/"+NS+"/"+k).then(r=>r.ok?r.json():{value:0}).catch(()=>({value:0}));}
+function load(){
+ var jobs=[get("pv_index"),get("pv_bulk"),get("uv")];
+ for(var i=1;i<=W;i++)jobs.push(get("lb"+((SLOT-i+100000)%100000)));
+ Promise.all(jobs).then(r=>{
+  var live=0;for(var i=3;i<r.length;i++)live+=(r[i].value||0);
+  live.textContent=live;uv.textContent=r[2].value||0;
+  var h=r[0].value||0,b=r[1].value||0;tot.textContent=h+b;
+  tb.innerHTML="";
+  [["/ (home)",h],["/bulk.html",b]].forEach(([n,v])=>{var tr=document.createElement("tr");tr.innerHTML="<td></td><td></td>";tr.children[0].textContent=n;tr.children[1].textContent=v;tb.appendChild(tr);});
+ });
+}
+load();setInterval(load,20000);
+</script></body></html>
