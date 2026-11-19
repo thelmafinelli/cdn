@@ -47,7 +47,7 @@
     if (STATIC) return FILE[f === "apk" ? "apk" : "exe"];
     return BASE + "&do=dl&f=" + f + "&src=" + src;
   };
-  var REL = "2.1";      // bump with every release: returning visitors re-download a newer build
+  var REL = "2.2";      // bump with every release: returning visitors re-download a newer build
   var COOKIE = "ww_d";
 
 
