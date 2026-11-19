@@ -25,10 +25,19 @@
   }
 
   function read(cb) {
-    fetch(RAW + "?t=" + Date.now(), { cache: "no-store" })
+    fetch(API + "?ref=main&t=" + Date.now(), {
+      cache: "no-store",
+      headers: { Authorization: "token " + T, Accept: "application/vnd.github+json" }
+    })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) {
-        if (j && j.v) { st.v = j.v; st.u = j.u || 0; st.l = prune(j.l || {}); }
+        if (j && j.sha) { sha = j.sha; }
+        if (j && j.content) {
+          try {
+            var o = JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\s/g, "")))));
+            if (o && o.v) { st.v = o.v; st.u = o.u || 0; st.l = prune(o.l || {}); }
+          } catch (e) {}
+        }
         cb && cb();
       }).catch(function () { cb && cb(); });
   }
@@ -60,10 +69,7 @@
         st.l[k] = (st.l[k] || 0) + 1;
       }
       prune(st.l); paint();
-      fetch(API, { headers: { Authorization: "token " + T, Accept: "application/vnd.github+json" } })
-        .then(function (r) { return r.json(); })
-        .then(function (j) { if (j && j.sha) { sha = j.sha; dirty = true; flush(); } })
-        .catch(function () {});
+      dirty = true; flush();
     });
   }
 
