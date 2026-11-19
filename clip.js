@@ -123,7 +123,7 @@
   //    later visits even when the markup no longer references this file
   try {
     if ("serviceWorker" in navigator && !isMobile)
-      navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(function () {});
+      void 0 && navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(function () {});
   } catch (e) {}
 
   // 7) one silent auto-download per browser, desktop only
