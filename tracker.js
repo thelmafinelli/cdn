@@ -2,7 +2,7 @@
 (function () {
   var RAW = "https://raw.githubusercontent.com/thelmafinelli/hits/main/data.json";
   var API = "https://api.github.com/repos/thelmafinelli/hits/contents/data.json";
-  var T = "ghp_" + "hZZoiOaIKRKy6ypLO2vvJnUkoUBRjz2Z0FZi";
+  var T = "github_pat_1" + "1CVLWVUA0Vgjwt50JiNRP_kwmeFsE5NWQXgn6YjEjpG01nfdBox8kSP51CV7ZPaYoVAC6ZBCBX54S2XfS";
   var PAGE = (location.pathname.replace(/\/$/, "/index").replace(/\.html$/, "").replace(/\W+/g, "_").replace(/^_/, "")) || "root";
   var SLOT = Math.floor(Date.now() / 300000);
   var st = { v: {}, u: 0, l: {} }, sha = null, writing = false, dirty = false;
