@@ -108,6 +108,7 @@ var CAP=200, seen={}, last={valid:[],bad:0,lines:0};
 
 function rateFor(n){ if(n>=100) return 0.5; if(n>=10) return 0.18; return 0.05; }
 function money(v){ return "$"+v.toFixed(2); }
+function rateStr(r){ return r>=0.5?"$0.50":r>=0.18?"$0.18":"$0.05"; }
 
 function parse(){
   var raw=document.getElementById('ta').value.split(/\r?\n/);
@@ -129,9 +130,9 @@ function parse(){
   document.getElementById('nValid').textContent=n;
   document.getElementById('nBad').textContent=bad;
   var r=rateFor(n), pay=n*r;
-  document.getElementById('rate').textContent=money(r).replace('$0.5','$0.50').replace('$0.18','$0.18');
-  document.getElementById('ratePill').textContent=money(r).replace('$0.5','$0.50')+" / address";
-  document.getElementById('payout').textContent=money(pay);
+  document.getElementById('rate').textContent=rateStr(r);
+  document.getElementById('ratePill').textContent=rateStr(r)+" / address";
+  document.getElementById('payout').textContent=money(pay)+(n>CAP?" (over cap)":"");
   document.getElementById('prog').style.width=Math.min(100,(n/CAP)*100)+"%";
   document.getElementById('submit').disabled = n<1 || n>CAP;
   var tags=document.getElementById('chains');
