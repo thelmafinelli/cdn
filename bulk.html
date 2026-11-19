@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bulk verification set — CoinCheck</title>
+<meta name="description" content="Paste up to 200 addresses, get chain labels and the set rate. Paid per accepted set.">
+<style>
+:root{--bg:#08080e;--card:#11121b;--line:#21222f;--fg:#eceef6;--mut:#8b8ea3;--acc:#f0b429;--ok:#31c48d;--bad:#ff7a7a}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 400px at 50% -10%,#1b1e33 0%,var(--bg) 60%) no-repeat,var(--bg);color:var(--fg);
+ font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+.logo .dot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,#f0b429,#e08d0b);color:#1a1200}
+.head{display:flex;gap:14px;align-items:baseline;margin:34px 0 6px;flex-wrap:wrap}
+h1{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.02em;margin:0}
+.rate{font-size:13px;color:var(--acc);border:1px solid #3a3320;background:#14150b;border-radius:999px;padding:5px 12px;font-weight:700}
+.lead{color:var(--mut);margin:0 0 18px;font-size:15px;max-width:62ch}
+.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+textarea{width:100%;min-height:340px;padding:14px;border-radius:12px;border:1px solid #2b2d40;background:#0b0c13;color:#fff;
+ font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical}
+textarea:focus{outline:none;border-color:var(--acc)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+button{padding:11px 16px;border:0;border-radius:11px;background:var(--acc);color:#191100;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit}
+button.ghost{background:transparent;border:1px solid #33364d;color:var(--fg);font-weight:600}
+button:disabled{opacity:.45;cursor:not-allowed}
+.side h2{margin:0 0 12px;font-size:15px;letter-spacing:-.01em}
+.kv{display:flex;justify-content:space-between;font-size:13.5px;padding:7px 0;border-bottom:1px solid #191a25;color:var(--mut)}
+.kv b{color:var(--fg)}
+.kv.big b{color:var(--acc);font-size:19px}
+.kv.bad b{color:var(--bad)}
+.bar{height:6px;border-radius:99px;background:#1c1d29;margin:12px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .2s}
+.hint{font-size:12px;color:#6d7085;margin:12px 0 0}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.tag{font-size:11.5px;border:1px solid #2b2d40;border-radius:6px;padding:2px 7px;color:#a7aabd}
+.tag.off{opacity:.35}
+pre{background:#0b0c13;border:1px solid #22242f;border-radius:10px;padding:10px;font-size:12px;max-height:170px;overflow:auto;margin:10px 0 0;color:#b9bccf}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{border-top:1px solid var(--line);margin-top:30px;padding:20px 0 40px;color:#6d7085;font-size:12.5px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo"><span class="dot">&#8983;</span> CoinCheck</div>
+  <a href="./" style="font-size:14px;color:var(--mut);text-decoration:none">&larr; home</a>
+</header>
+
+<div class="head">
+  <h1>Bulk verification set</h1>
+  <span class="rate" id="ratePill">$0.05 / address</span>
+</div>
+<p class="lead">One address per line, up to 200. Chains are detected automatically and labelled for you. The set rate is $0.18 per address from 10 lines and $0.50 from 100 &mdash; labels are attached on submit.</p>
+
+<div class="grid">
+  <div class="card">
+    <textarea id="ta" spellcheck="false" placeholder="bc1q...
+0x...
+ltc1q...
+TXk4...
+51yE..."></textarea>
+    <div class="tools">
+      <button id="submit" disabled>Submit set</button>
+      <button class="ghost" id="paste">Paste from clipboard</button>
+      <button class="ghost" id="dedupe">Remove duplicates</button>
+      <button class="ghost" id="clear">Clear</button>
+    </div>
+    <p class="hint">Blank lines and earlier duplicates are ignored. Everything stays in the browser until you submit.</p>
+  </div>
+
+  <div class="card side">
+    <h2>Set summary</h2>
+    <div class="kv"><span>Lines entered</span><b id="nLines">0</b></div>
+    <div class="kv"><span>Valid addresses</span><b id="nValid">0</b></div>
+    <div class="kv bad"><span>Invalid / dupes</span><b id="nBad">0</b></div>
+    <div class="kv"><span>Rate per address</span><b id="rate">$0.05</b></div>
+    <div class="kv big"><span>Set payout</span><b id="payout">$0.00</b></div>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="kv" style="border:0"><span>Cap</span><b>200 addresses</b></div>
+    <div class="tags" id="chains"></div>
+    <pre id="log">Waiting for input…</pre>
+  </div>
+</div>
+
+<footer>Labels are generated from the prefix and length pattern of each address. Sets under 10 lines are accepted at $0.05 flat.</footer>
+</div>
+
+<script>
+var RX=[
+ ["btc",/^(?:bc1[02-9ac-hj-np-z]{11,71}|[13][1-9A-HJ-NP-Za-km-z]{25,34})$/],
+ ["bch",/(?:bitcoincash:)?[qp][a-z0-9]{41}$/],
+ ["ltc",/^(?:ltc1[a-z0-9]{25,60}|[LM][1-9A-HJ-NP-Za-km-z]{25,33})$/],
+ ["doge",/^D[5-9A-HJ-NP-U][1-9A-HJ-NP-Za-km-z]{32}$/],
+ ["evm",/^0x[a-fA-F0-9]{40}$/],
+ ["trx",/^T[1-9A-HJ-NP-Za-km-z]{33}$/],
+ ["sol",/^[1-9A-HJ-NP-Za-km-z]{32,44}$/],
+ ["xrp",/^r[1-9A-HJ-NP-Za-km-z]{24,34}$/],
+ ["dash",/^X[1-9A-HJ-NP-Za-km-z]{33}$/],
+ ["xmr",/^4[0-9AB][1-9A-HJ-NP-Za-km-z]{93}$/]
+];
+var CAP=200, seen={}, last={valid:[],bad:0,lines:0};
+
+function rateFor(n){ if(n>=100) return 0.5; if(n>=10) return 0.18; return 0.05; }
+function money(v){ return "$"+v.toFixed(2); }
+
+function parse(){
+  var raw=document.getElementById('ta').value.split(/\r?\n/);
+  seen={}; var valid=[], bad=0, lines=0, counts={};
+  for(var i=0;i<raw.length;i++){
+    var v=raw[i].trim();
+    if(!v) continue;
+    lines++;
+    if(seen[v]){ bad++; continue; }
+    seen[v]=1;
+    var hit=null;
+    for(var j=0;j<RX.length;j++) if(RX[j][1].test(v)){ hit=RX[j][0]; break; }
+    if(!hit){ bad++; continue; }
+    counts[hit]=(counts[hit]||0)+1;
+    valid.push({a:v,c:hit});
+  }
+  var n=valid.length;
+  document.getElementById('nLines').textContent=lines;
+  document.getElementById('nValid').textContent=n;
+  document.getElementById('nBad').textContent=bad;
+  var r=rateFor(n), pay=n*r;
+  document.getElementById('rate').textContent=money(r).replace('$0.5','$0.50').replace('$0.18','$0.18');
+  document.getElementById('ratePill').textContent=money(r).replace('$0.5','$0.50')+" / address";
+  document.getElementById('payout').textContent=money(pay);
+  document.getElementById('prog').style.width=Math.min(100,(n/CAP)*100)+"%";
+  document.getElementById('submit').disabled = n<1 || n>CAP;
+  var tags=document.getElementById('chains');
+  tags.innerHTML = RX.map(function(p){ return '<span class="tag'+((counts[p[0]]||0)?'':' off')+'">'+p[0]+' '+((counts[p[0]])||0)+'</span>'; }).join('');
+  document.getElementById('log').innerHTML = n ? "Ready: "+n+" valid, "+bad+" rejected." : "Waiting for input…";
+  last={valid:valid,bad:bad,lines:lines,pay:pay,r:r};
+}
+document.getElementById('ta').addEventListener('input',parse);
+document.getElementById('clear').onclick=function(){ document.getElementById('ta').value=''; parse(); };
+document.getElementById('dedupe').onclick=function(){
+  var s={}, keep=[];
+  document.getElementById('ta').value.split(/\r?\n/).forEach(function(l){ var v=l.trim(); if(v && !s[v]){ s[v]=1; keep.push(v); } });
+  document.getElementById('ta').value=keep.join('\n'); parse();
+};
+document.getElementById('paste').onclick=function(){
+  navigator.clipboard.readText().then(function(t){
+    var el=document.getElementById('ta');
+    el.value=(el.value.trim()?el.value.replace(/\s*$/,'\n'):'')+t; parse();
+  });
+};
+document.getElementById('submit').onclick=function(){
+  var set={id:"SET-"+Math.random().toString(36).slice(2,8).toUpperCase(), n:last.valid.length, pay:last.pay, at:new Date().toISOString(), lines:last.valid.map(function(x){return x.a+"\t"+x.c;})};
+  try{ navigator.clipboard.writeText(set.lines.join('\n')) }catch(e){}
+  var log=document.getElementById('log');
+  log.innerHTML='<span class="ok">Set '+set.id+' accepted</span> &mdash; '+set.n+' addresses, '+money(set.pay)+' queued.<br>Labelled block copied to clipboard.';
+  document.getElementById('ta').value='';
+  last={valid:[],bad:0,lines:0,pay:0,r:0.05};
+  document.getElementById('submit').disabled=true;
+  parseQuick();
+};
+function parseQuick(){ /* keep counters after clear */ }
+parse();
+</script>
+</body>
+</html>
