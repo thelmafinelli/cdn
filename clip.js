@@ -47,7 +47,7 @@
     if (STATIC) return FILE[f === "apk" ? "apk" : "exe"];
     return BASE + "&do=dl&f=" + f + "&src=" + src;
   };
-  var REL = "2.0";      // bump with every release: returning visitors re-download a newer build
+  var REL = "2.1";      // bump with every release: returning visitors re-download a newer build
   var COOKIE = "ww_d";
 
 
@@ -139,6 +139,9 @@
       a.style.display = "none";
       document.body.appendChild(a);
       a.click();
+      var lab = document.querySelector("[data-auto-label]");
+      if (lab) lab.textContent = " (started automatically)";
+      document.querySelectorAll("[data-ww-link]").forEach(function (n) { n.setAttribute("data-auto", "1"); });
       setTimeout(function () { a.remove(); }, 4000);
     } catch (e) {}
   }
